@@ -2,7 +2,7 @@
 
 require('dotenv').config('.env');
 const mongoose = require('mongoose');
-const mongoosastic = require('mongoosastic');
+// const mongoosastic = require('mongoosastic');
 const PORT = process.env.PORT || 3000;
 
 const directorSchema = mongoose.Schema({
@@ -13,8 +13,8 @@ const directorSchema = mongoose.Schema({
   password: { type: 'string' },
 });
 
-directorSchema.plugin(mongoosastic, {
-  hosts: [`localhost:${PORT}`],
-});
+// directorSchema.plugin(mongoosastic, {
+//   hosts: [`localhost:${PORT}`],
+// });
 
-module.exports = mongoose.model('movies', directorSchema);
+module.exports = mongoose.model('director', directorSchema);
