@@ -7,8 +7,8 @@ const PORT = process.env.PORT || 3000;
 
 const actorSchema = mongoose.Schema({
   name: { type: 'string', required: true },
-  facebook_likes: { type: 'integer', required: true },
-  age: { type: 'integer' },
+  facebook_likes: { type: 'Number', required: true },
+  age: { type: 'Number' },
   facebook_page_link: { type: 'string', required: true },
 });
 
@@ -16,4 +16,4 @@ const actorSchema = mongoose.Schema({
 //   hosts: [`localhost:${PORT}`],
 // });
 
-module.exports = mongoose.model('movies', actorSchema);
+module.exports = mongoose.model('actor', actorSchema);

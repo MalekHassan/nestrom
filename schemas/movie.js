@@ -2,34 +2,38 @@
 
 require('dotenv').config('.env');
 const mongoose = require('mongoose');
-const mongoosastic = require('mongoosastic');
+// const mongoosastic = require('mongoosastic');
 const PORT = process.env.PORT || 3000;
 
 const movieSchema = mongoose.Schema({
   title: { type: 'string' },
-  duration: { type: 'integer ' },
-  gross: { type: 'integer' },
-  genres: { type: 'string' },
-  num_voted_users: { type: 'integer' },
-  cast_total_facebook_likes: { type: 'integer' },
-  plot_keywords: { type: 'string' },
+  duration: { type: 'Number' },
+  gross: { type: 'Number' },
+  genres: { type: [] },
+  num_voted_users: { type: 'Number' },
+  cast_total_facebook_likes: { type: 'Number' },
+  plot_keywords: { type: [] },
   imdb_link: { type: 'string' },
-  num_user_for_reviews: { type: 'integer' },
+  num_user_for_reviews: { type: 'Number' },
   language: { type: 'string' },
   country: { type: 'string' },
-  content_rating: { type: 'integer' },
-  budget: { type: 'integer' },
+  content_rating: { type: 'string' },
+  budget: { type: 'Number' },
   title_year: { type: 'string' },
-  imdb_score: { type: 'integer' },
-  aspect_ratio: { type: 'integer' },
-  movie_facebook_likes: { type: 'integer' },
-  actors: [{ type: 'string' }],
-  director: { type: 'string' },
+  imdb_score: { type: 'Number' },
+  aspect_ratio: { type: 'Number' },
+  movie_facebook_likes: { type: 'Number' },
+  actors: { type: [], ref: 'actor' },
+  director: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'director',
+    required: true,
+  },
   color: { type: 'string' },
 });
 
-movieSchema.plugin(mongoosastic, {
-  hosts: [`localhost:${PORT}`],
-});
+// movieSchema.plugin(mongoosastic, {
+//   hosts: [`localhost:${PORT}`],
+// });
 
 module.exports = mongoose.model('movies', movieSchema);
