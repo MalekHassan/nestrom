@@ -1,7 +1,21 @@
 'use strict';
 
+require('dotenv').config('.env');
 const allData = require('./allData');
 const actorSchema = require('../schemas/actor');
+
+// connecting dataBase
+const mongoose = require('mongoose');
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  'mongodb+srv://nestrom-playground:Ma@12345678@nestrom.00d8t.mongodb.net/nestrom-playground?retryWrites=true&w=majority';
+
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+});
 
 // General Decelerations
 let allActorsName = [];
@@ -16,6 +30,7 @@ function gettingTheNames() {
   });
 }
 
+// Making sure that there is no duplicated actors
 function gettingInduplicateActors(allActorsName) {
   var lookupObject = {};
 
@@ -24,20 +39,17 @@ function gettingInduplicateActors(allActorsName) {
   }
 
   for (i in lookupObject) {
-    // console.log(lookupObject[i].facebook_likes == null);
-    if (typeof lookupObject[i].facebook_likes !== Number) {
-      console.log(lookupObject[i]);
-    }
     if (lookupObject[i].facebook_likes !== null) {
       actorsInduplicate.push(lookupObject[i]);
     }
   }
 }
+
+// Invoke the function
 gettingTheNames();
 gettingInduplicateActors(allActorsName);
-// console.log(actorsInduplicate);
 
-// constructors
+// constructors to get the data as an object
 function ActorOne(details) {
   this.name = details.actor_1_name;
   this.facebook_likes = details.actor_1_facebook_likes;
@@ -60,13 +72,12 @@ function ActorThree(details) {
 }
 
 // Adding data to the data base
-const actor = new actorSchema(actorsInduplicate[0]);
-console.log(actor);
-async () => {
-  console.log('added');
-  await actor.save();
-  console.log('added');
-};
-// actorsInduplicate.forEach((actor) => {});
+function addingActors() {
+  actorsInduplicate.forEach((element) => {
+    const actor = new actorSchema(element);
+    actor.save();
+  });
+}
 
-// module.exports = actorsInduplicate;
+// Invoke function
+addingActors();

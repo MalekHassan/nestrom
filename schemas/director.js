@@ -7,14 +7,14 @@ const PORT = process.env.PORT || 3000;
 
 const directorSchema = mongoose.Schema({
   name: { type: 'string' },
-  facebook_likes: { type: 'integer ' },
-  age: { type: 'integer' },
+  facebook_likes: { type: 'Number' },
+  age: { type: 'Number' },
   username: { type: 'string' },
   password: { type: 'string' },
 });
 
 // directorSchema.plugin(mongoosastic, {
-//   hosts: [`localhost:${PORT}`],
+//   hosts: [http://localhost:9200],
 // });
 
 module.exports = mongoose.model('director', directorSchema);
