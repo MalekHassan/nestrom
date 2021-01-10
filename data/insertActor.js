@@ -75,7 +75,14 @@ function ActorThree(details) {
 function addingActors() {
   actorsInduplicate.forEach((element) => {
     const actor = new actorSchema(element);
-    actor.save();
+    actor.save(function (err) {
+      if (err) throw err;
+      /* Document indexation on going */
+      actor.on('es-indexed', function (err, res) {
+        if (err) throw err;
+        /* Document is indexed */
+      });
+    });
   });
 }
 

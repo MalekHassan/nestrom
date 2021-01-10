@@ -2,7 +2,6 @@
 
 require('dotenv').config('.env');
 const mongoose = require('mongoose');
-// const mongoosastic = require('mongoosastic');
 const PORT = process.env.PORT || 3000;
 
 const actorSchema = mongoose.Schema({
@@ -11,9 +10,5 @@ const actorSchema = mongoose.Schema({
   age: { type: 'Number' },
   facebook_page_link: { type: 'string', required: true },
 });
-
-// actorSchema.plugin(mongoosastic, {
-//   hosts: [`localhost:${PORT}`],
-// });
 
 module.exports = mongoose.model('actor', actorSchema);
