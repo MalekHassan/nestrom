@@ -46,9 +46,6 @@ const movieSchema = mongoose.Schema({
 let esClient = new elasticsearch.Client({
   host:
     'https://elastic:wSdGjdmoISZe0QOLsQLHnGCq@7ef9aaa0844a4c6c9fdbd02e916b9b25.us-east-1.aws.found.io:9243',
-  // requestTimeout: 60000,
-  // keepAlive: false,
-  // connectionClass: require('http-aws-es'),
 });
 movieSchema.plugin(mongoosastic, {
   esClient: esClient,

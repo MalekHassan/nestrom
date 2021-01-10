@@ -215,7 +215,7 @@ movieSchema.createMapping(function (err, mapping) {
 });
 
 let stream = movieSchema.synchronize();
-
+// search movie by title
 app.get('/movie/search/title', function (req, res, next) {
   if (req.query.q) {
     movieSchema.search(
@@ -232,6 +232,7 @@ app.get('/movie/search/title', function (req, res, next) {
   }
 });
 
+// search movie by genres
 app.get('/movie/search/genres', function (req, res, next) {
   if (req.query.q) {
     movieSchema.search(
@@ -248,6 +249,7 @@ app.get('/movie/search/genres', function (req, res, next) {
   }
 });
 
+// search movie by plot_keywords
 app.get('/movie/search/plot_keywords', function (req, res, next) {
   if (req.query.q) {
     movieSchema.search(
@@ -264,6 +266,7 @@ app.get('/movie/search/plot_keywords', function (req, res, next) {
   }
 });
 
+// get the number of the movie in a language
 app.get('/movie/search/language/_count', function (req, res, next) {
   if (req.query.q) {
     movieSchema.search(
@@ -281,6 +284,7 @@ app.get('/movie/search/language/_count', function (req, res, next) {
   }
 });
 
+// get the number for the movies for a country
 app.get('/movie/search/country/count', function (req, res, next) {
   if (req.query.q) {
     movieSchema.search(
