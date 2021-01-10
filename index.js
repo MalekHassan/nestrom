@@ -43,6 +43,7 @@ app.delete('/deleteDirector/:id', deleteDirector);
 app.patch('/editMovie/:id', updateMovie);
 app.put('/editMovie/:id', updateMovie);
 app.delete('/deleteMovie/:id', deleteMovie);
+app.get('/test', test);
 
 // function
 
@@ -195,9 +196,69 @@ async function deleteMovie(req, res) {
   let deleteMovie = await movieSchema.findByIdAndDelete(req.params.id);
   res.status(200).json({ deleteMovie });
 }
+
 // connect the server deleteActor
 mongoose.connection.once('open', () => {
   app.listen(PORT, () => {
     console.log(`we are listening to ${PORT}`);
   });
 });
+
+// elastic search methods
+// directorSchema.createMapping(function (err, mapping) {
+//   if (err) {
+//     console.log('There is an error');
+//     console.log(err);
+//   } else {
+//     console.log('Mapping created for Director');
+//     console.log(mapping);
+//   }
+// });
+
+// let stream = directorSchema.synchronize();
+// let count = 0;
+
+// stream.on('data', function () {
+//   count++;
+// });
+// stream.on('close', function () {
+//   console.log('index ', count);
+// });
+// stream.on('error', function (err) {
+//   console.log();
+//   console.log(err);
+// });
+
+// app.post('/search', function (req, res, next) {
+//   res.redirect('/search?q=' + req.body.q);
+// });
+
+// app.get('search', function (req, res, next) {
+//   if (req.query.q) {
+//     directorSchema.search(
+//       { query_string: { query: req.query.q } },
+//       function (err, results) {
+//         if (err) return next(err);
+//         let data = results.hits.hits.map(function (hit) {
+//           return hit;
+//         });
+//         res.status(200).json({ data });
+//       }
+//     );
+//   }
+// });
+function test(req, res) {
+  console.log('jujuj');
+  directorSchema.search(
+    {
+      query_string: {
+        query: 'jhyhgrdn',
+      },
+    },
+    function (err, results) {
+      // results here
+      res.send({ results });
+      console.log(results);
+    }
+  );
+}

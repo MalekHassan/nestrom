@@ -56,11 +56,18 @@ function Director(details) {
 }
 
 // saving to the database
-function addingDirector() {
-  directorInduplicate.forEach((element) => {
-    const director = new directorSchema(element);
-    director.save();
+async function addingDirector() {
+  // directorInduplicate.forEach((element) => {
+  const director = new directorSchema(directorInduplicate[0]);
+  await director.save(function (err) {
+    if (err) throw err;
+    /* Document indexation on going */
+    director.on('es-indexed', function (err, res) {
+      if (err) throw err;
+      /* Document is indexed */
+    });
   });
+  // });
 }
 
 // Invoke the function

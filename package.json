@@ -19,8 +19,10 @@
   "homepage": "https://github.com/MalekHassan/nestrom#readme",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "elasticsearch": "^16.7.2",
     "express": "^4.17.1",
     "hapi": "^18.1.0",
+    "mongoosastic": "^4.6.0",
     "mongoose": "^5.11.10"
   }
 }
