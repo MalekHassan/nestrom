@@ -8,6 +8,7 @@ const movieSchema = require('../schemas/movie');
 
 // connecting dataBase
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 const MONGODB_URI =
   process.env.MONGODB_URI ||
   'mongodb+srv://nestrom-playground:Ma@12345678@nestrom.00d8t.mongodb.net/nestrom-playground?retryWrites=true&w=majority';
@@ -17,6 +18,7 @@ mongoose.connect(MONGODB_URI, {
   useUnifiedTopology: true,
   useCreateIndex: true,
   useFindAndModify: false,
+  promiseLibrary: global.Promise,
 });
 
 // function to add the movies to the data base
@@ -32,11 +34,14 @@ async function AddingTheMovies() {
     allData[i].genres = allData[i].genres.split('|'); // to get an array that contains all the genres
     allData[i].plot_keywords = allData[i].plot_keywords.split('|'); // to get an array that contains all the plot_keywords
     allData[i].actors = []; // To receive the date of the ID for the actors in a movie
+    // allData[i].imdb_score = allData[i].imdb_score.toString();
+    console.log(allData[i].imdb_score);
     if (allData[i].actor_1_name) {
       let name = allData[i].actor_1_name;
       let searchedActor = await actorSchema.find({ name: name });
-      if (searchedActor.length > 0)
+      if (searchedActor.length > 0) {
         allData[i].actors.push(searchedActor[0]._id);
+      }
     }
     if (allData[i].actor_2_name) {
       let name = allData[i].actor_2_name;
@@ -51,7 +56,14 @@ async function AddingTheMovies() {
         allData[i].actors.push(searchedActor[0]._id);
     }
     const movie = new movieSchema(allData[i]);
-    await movie.save();
+    await movie.save(function (err) {
+      if (err) throw err;
+      /* Document indexation on going */
+      movie.on('es-indexed', function (err, res) {
+        if (err) throw err;
+        /* Document is indexed */
+      });
+    });
   }
 }
 

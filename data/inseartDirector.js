@@ -56,8 +56,8 @@ function Director(details) {
 }
 
 // saving to the database
-function addingDirector() {
-  directorInduplicate.forEach((element) => {
+async function addingDirector() {
+  directorInduplicate.forEach((element, index) => {
     const director = new directorSchema(element);
     director.save();
   });

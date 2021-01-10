@@ -195,9 +195,141 @@ async function deleteMovie(req, res) {
   let deleteMovie = await movieSchema.findByIdAndDelete(req.params.id);
   res.status(200).json({ deleteMovie });
 }
+
 // connect the server deleteActor
 mongoose.connection.once('open', () => {
   app.listen(PORT, () => {
     console.log(`we are listening to ${PORT}`);
   });
+});
+
+// elastic search methods
+movieSchema.createMapping(function (err, mapping) {
+  if (err) {
+    console.log('There is an error');
+    console.log(err);
+  } else {
+    console.log('Mapping created for Director');
+    console.log(mapping);
+  }
+});
+
+let stream = movieSchema.synchronize();
+
+app.get('/movie/search/title', function (req, res, next) {
+  if (req.query.q) {
+    movieSchema.search(
+      { query_string: { query: req.query.q } },
+      function (err, results) {
+        if (err) return next(err);
+        let data = results.hits.hits.map(function (hit) {
+          console.log(hit._index);
+          if (hit._source.title.includes(req.query.q)) return hit;
+        });
+        res.status(200).json({ data });
+      }
+    );
+  }
+});
+
+app.get('/movie/search/genres', function (req, res, next) {
+  if (req.query.q) {
+    movieSchema.search(
+      { query_string: { query: req.query.q } },
+      function (err, results) {
+        if (err) return next(err);
+        let data = results.hits.hits.map(function (hit) {
+          console.log(hit._source.genres);
+          if (hit._source.genres.includes(req.query.q)) return hit;
+        });
+        res.status(200).json({ data });
+      }
+    );
+  }
+});
+
+app.get('/movie/search/plot_keywords', function (req, res, next) {
+  if (req.query.q) {
+    movieSchema.search(
+      { query_string: { query: req.query.q } },
+      function (err, results) {
+        if (err) return next(err);
+        let data = results.hits.hits.map(function (hit) {
+          console.log(hit._index);
+          if (hit._source.plot_keywords.includes(req.query.q)) return hit;
+        });
+        res.status(200).json({ data });
+      }
+    );
+  }
+});
+
+app.get('/movie/search/language/_count', function (req, res, next) {
+  if (req.query.q) {
+    movieSchema.search(
+      { query_string: { query: req.query.q } },
+      function (err, results) {
+        if (err) return next(err);
+        console.log(results.hits);
+        let count = 0;
+        results.hits.hits.map(function (hit) {
+          count++;
+        });
+        res.status(200).json({ count });
+      }
+    );
+  }
+});
+
+app.get('/movie/search/country/count', function (req, res, next) {
+  if (req.query.q) {
+    movieSchema.search(
+      { query_string: { query: req.query.q } },
+      function (err, results) {
+        if (err) return next(err);
+        let count = 0;
+        results.hits.hits.map(function (hit) {
+          count++;
+        });
+        res.status(200).json({ count });
+      }
+    );
+  }
+});
+
+app.get('/movie/search/imdb_score/count', function (req, res, next) {
+  console.log(req.query.imdb_score);
+  if (req.query.q) {
+    movieSchema.search(
+      {
+        query_string: {
+          query: `(>=${req.query.imdb_score.lte} AND<${req.query.imdb_score.lte})`,
+        },
+      },
+      function (err, results) {
+        if (err) return next(err);
+        let data = results.hits.hits.map(function (hit) {
+          console.log(hit._index);
+          return hit;
+        });
+        res.status(200).json({ data });
+      }
+    );
+  }
+});
+
+app.get('/movie/search/movie/all', function (req, res, next) {
+  if (req.query.q) {
+    movieSchema.search(
+      { query_string: { query: req.query.q } },
+      function (err, results) {
+        if (err) return next(err);
+        let data = results.hits.hits.map(function (hit) {
+          console.log(hit._index);
+          return hit;
+        });
+        res.status(200).json({ data });
+      }
+    );
+  }
 });
