@@ -306,10 +306,14 @@ app.get('/movie/search/imdb_score/count', function (req, res, next) {
   if (req.query.q) {
     movieSchema.search(
       {
-        query_string: {
-          query: `(>=${req.query.imdb_score.lte} AND<${req.query.imdb_score.lte})`,
+        range: {
+          imdb_score: {
+            from: req.query.imdb_score.lte,
+            to: req.query.imdb_score.lte,
+          },
         },
       },
+
       function (err, results) {
         if (err) return next(err);
         let data = results.hits.hits.map(function (hit) {
