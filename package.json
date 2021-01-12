@@ -25,6 +25,6 @@
     "hapi": "^18.1.0",
     "http-aws-es": "^6.0.0",
     "mongoosastic": "^4.6.0",
-    "mongoose": "^5.11.10"
+    "mongoose": "^5.11.11"
   }
 }
