@@ -12,7 +12,7 @@ const router = express.Router();
 const app = express();
 const MONGODB_URI =
   process.env.MONGODB_URI ||
-  'mongodb+srv://nestrom-playground:Ma@12345678@nestrom.00d8t.mongodb.net/nestrom-playground?retryWrites=true&w=majority';
+  'mongodb+srv://nestrom-playground:Ma@12345678@cluster0.xe9b2.mongodb.net/nestrom-playground1111?retryWrites=true&w=majority';
 const PORT = process.env.PORT || 3000;
 
 // connect mongoDB
@@ -214,64 +214,156 @@ movieSchema.createMapping(function (err, mapping) {
   }
 });
 
-let stream = movieSchema.synchronize();
 // search movie by title
 app.get('/movie/search/title', function (req, res, next) {
-  if (req.query.q) {
-    movieSchema.search(
-      { query_string: { query: req.query.q } },
-      function (err, results) {
-        if (err) return next(err);
-        let data = results.hits.hits.map(function (hit) {
-          console.log(hit._index);
-          if (hit._source.title.includes(req.query.q)) return hit;
-        });
-        res.status(200).json({ data });
-      }
-    );
+  // Example to run the route http://localhost:3000/movie/search/title?q=Ponyo
+  try {
+    if (req.query.q) {
+      movieSchema.search(
+        {
+          query_string: { query: req.query.q },
+        },
+        {
+          size: 5043,
+        },
+        function (err, results) {
+          if (err) return next(err);
+          let data = results.hits.hits.map(function (hit) {
+            if (hit._source.title.includes(req.query.q)) return hit;
+          });
+          res.status(200).json({ data });
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
   }
 });
 
 // search movie by genres
 app.get('/movie/search/genres', function (req, res, next) {
-  if (req.query.q) {
-    movieSchema.search(
-      { query_string: { query: req.query.q } },
-      function (err, results) {
-        if (err) return next(err);
-        let data = results.hits.hits.map(function (hit) {
-          console.log(hit._source.genres);
-          if (hit._source.genres.includes(req.query.q)) return hit;
-        });
-        res.status(200).json({ data });
-      }
-    );
+  // Example to run the route http://localhost:3000/movie/search/genres?q=Adventure
+  try {
+    if (req.query.q) {
+      movieSchema.search(
+        { query_string: { query: req.query.q } },
+        {
+          from: 0,
+          size: 5043,
+        },
+
+        function (err, results) {
+          if (err) return next(err);
+          let data = results.hits.hits.map(function (hit) {
+            return hit;
+          });
+          res.status(200).json({ data });
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
   }
 });
 
 // search movie by plot_keywords
 app.get('/movie/search/plot_keywords', function (req, res, next) {
-  if (req.query.q) {
-    movieSchema.search(
-      { query_string: { query: req.query.q } },
-      function (err, results) {
-        if (err) return next(err);
-        let data = results.hits.hits.map(function (hit) {
-          console.log(hit._index);
-          if (hit._source.plot_keywords.includes(req.query.q)) return hit;
-        });
-        res.status(200).json({ data });
-      }
-    );
+  // Example to run the route http://localhost:3000/movie/search/plot_keywords?q=future
+  try {
+    if (req.query.q) {
+      movieSchema.search(
+        { query_string: { query: req.query.q } },
+        {
+          from: 0,
+          size: 5043,
+        },
+        function (err, results) {
+          if (err) return next(err);
+          let data = results.hits.hits.map(function (hit) {
+            if (hit._source.plot_keywords.includes(req.query.q)) return hit;
+          });
+          res.status(200).json({ data });
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
   }
 });
 
 // get the number of the movie in a language
 app.get('/movie/search/language/_count', function (req, res, next) {
-  if (req.query.q) {
-    movieSchema.search(
-      { query_string: { query: req.query.q } },
+  // Example to run the route http://localhost:3000/movie/search/language/_count?q=Germany
+  try {
+    if (req.query.q) {
+      movieSchema.search(
+        { query_string: { query: req.query.q } },
+        {
+          from: 0,
+          size: 5043,
+        },
+        function (err, results) {
+          if (err) return next(err);
+          let count = 0;
+          results.hits.hits.map(function () {
+            count++;
+          });
+          res.status(200).json({ count });
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// get the number for the movies for a country
+app.get('/movie/search/country/count', function (req, res, next) {
+  // Example to run the route http://localhost:3000/movie/search/country/count?q=Germany
+  try {
+    if (req.query.q) {
+      movieSchema.search(
+        {
+          query_string: { query: req.query.q },
+        },
+        {
+          from: 0,
+          size: 5043,
+        },
+        function (err, results) {
+          if (err) return next(err);
+          let count = 0;
+          results.hits.hits.map(function () {
+            count++;
+          });
+          res.status(200).json({ count });
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.get('/movie/search/imdb_score/count', function (req, res, next) {
+  //Example to run this route try this end-point /movie/search/imdb_score/count?imdb_score[lte]=6&imdb_score[mm]=6.9
+  try {
+    movieSchema.esSearch(
+      {
+        from: 1,
+        size: 5043,
+        query: {
+          range: {
+            imdb_score: {
+              from: req.query.imdb_score.lte,
+              to: req.query.imdb_score.mm,
+            },
+          },
+        },
+      },
+
       function (err, results) {
+        console.log(results);
         if (err) return next(err);
         console.log(results.hits);
         let count = 0;
@@ -281,37 +373,20 @@ app.get('/movie/search/language/_count', function (req, res, next) {
         res.status(200).json({ count });
       }
     );
+  } catch (err) {
+    console.log(err);
   }
 });
 
-// get the number for the movies for a country
-app.get('/movie/search/country/count', function (req, res, next) {
-  if (req.query.q) {
-    movieSchema.search(
-      { query_string: { query: req.query.q } },
-      function (err, results) {
-        if (err) return next(err);
-        let count = 0;
-        results.hits.hits.map(function (hit) {
-          count++;
-        });
-        res.status(200).json({ count });
-      }
-    );
-  }
-});
-
-app.get('/movie/search/imdb_score/count', function (req, res, next) {
-  console.log(req.query.imdb_score);
-  if (req.query.q) {
+// Get all movies and filter them (unfinished)
+app.get('/movie/search/movie/all', function (req, res, next) {
+  try {
     movieSchema.search(
       {
-        range: {
-          imdb_score: {
-            from: req.query.imdb_score.lte,
-            to: req.query.imdb_score.lte,
-          },
-        },
+        match_all: {},
+      },
+      {
+        size: 5043,
       },
 
       function (err, results) {
@@ -323,21 +398,7 @@ app.get('/movie/search/imdb_score/count', function (req, res, next) {
         res.status(200).json({ data });
       }
     );
-  }
-});
-
-app.get('/movie/search/movie/all', function (req, res, next) {
-  if (req.query.q) {
-    movieSchema.search(
-      { query_string: { query: req.query.q } },
-      function (err, results) {
-        if (err) return next(err);
-        let data = results.hits.hits.map(function (hit) {
-          console.log(hit._index);
-          return hit;
-        });
-        res.status(200).json({ data });
-      }
-    );
+  } catch (err) {
+    console.log(err);
   }
 });

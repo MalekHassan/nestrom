@@ -1,4 +1,4 @@
-# Notesy
+# Notes
 
 ## Author:Malek Hassan Hasan Al-Dalal'ah
 
